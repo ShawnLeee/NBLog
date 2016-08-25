@@ -6,6 +6,7 @@ from . import api
 from flask import request
 from Common import QBUser, QBPost, Comment
 from flask import jsonify
+from app import db
 
 
 @api.route('/post', methods=['GET'])
@@ -27,11 +28,14 @@ def get_comments():
     comments = Comment.query.get_or_404()
 
 
-@api.route('/posts/', methods=['POST'])
+@api.route('/posts/', methods=['POST','GET'])
 def new_post():
-    resjson = request.get_json()
-    post = QBPost.from_json(resjson)
-    return jsonify(rej)
+    story = request.form.get('story')
+    user_id = request.form.get('user_id')
+    post = QBPost.post_with(story=story, user_id=user_id)
+    db.session.add(post)
+    db.session.commit()
+    return jsonify(post.to_json())
 
 
 @api.route('/upload',methods=['GET', 'POST'])
