@@ -1,5 +1,7 @@
 # -*- coding:utf-8 -*-
+import time
 from app import db
+from uuid import uuid4
 
 
 class QBUser(db.Model):
@@ -53,6 +55,15 @@ class QBPost(db.Model):
         json_post = dict(post_id=self.post_id, user_id=self.user_id, like_count=self.like_count,
                          comment_count=self.comment_count, post_text=self.post_text, created_time=self.created_time)
         return json_post
+
+    @staticmethod
+    def post_with(story, user_id):
+        post = QBPost()
+        post.user_id = user_id
+        post.post_text = story
+        post.post_id = uuid4().hex
+        post.created_time = time.ctime()
+        return post
 
     @staticmethod
     def from_json(json_post):
